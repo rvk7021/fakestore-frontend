@@ -19,11 +19,60 @@ interface ProductsPageProps {
     initialProducts: Product[]
 }
 
-const LoadingSpinner = () => (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-purple-900 bg-opacity-95">
-        <div className="relative w-24 h-24">
-            <div className="absolute inset-0 border-4 border-t-orange-500 border-r-purple-400 border-b-orange-500 border-l-purple-400 rounded-full animate-spin"></div>
-            <div className="absolute inset-3 border-4 border-t-purple-400 border-r-orange-500 border-b-purple-400 border-l-orange-500 rounded-full animate-spin animation-delay-150"></div>
+const ProductSkeleton = () => (
+    <div className="bg-purple-800 rounded-xl overflow-hidden shadow-lg border border-purple-600/30 h-full flex flex-col">
+        <div className="bg-purple-900/50 p-6 flex items-center justify-center h-56 relative">
+            <div className="w-3/4 h-28 bg-purple-700/40 animate-pulse rounded"></div>
+            <div className="absolute top-4 right-4">
+                <span className="bg-purple-700/40 animate-pulse text-transparent text-xs px-8 py-1 rounded-full">
+                    &nbsp;
+                </span>
+            </div>
+        </div>
+
+        <div className="p-6 flex flex-col flex-grow">
+            <div className="h-5 bg-purple-700/40 animate-pulse rounded mb-2"></div>
+            <div className="h-5 bg-purple-700/40 animate-pulse rounded w-3/4 mb-4"></div>
+            <div className="flex items-center mb-4">
+                <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="w-4 h-4 bg-purple-700/40 animate-pulse rounded-full mr-1"></div>
+                    ))}
+                </div>
+                <div className="ml-2 w-10 h-4 bg-purple-700/40 animate-pulse rounded"></div>
+            </div>
+            <div className="mt-auto flex items-center justify-between">
+                <div className="w-16 h-7 bg-purple-700/40 animate-pulse rounded"></div>
+                <div className="w-8 h-8 bg-purple-700/40 animate-pulse rounded-full"></div>
+            </div>
+        </div>
+    </div>
+);
+
+const SkeletonFilter = () => (
+    <div className="bg-purple-800 rounded-xl p-6 mb-8 shadow-lg border border-purple-600/30">
+        <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+            <div className="relative flex-grow">
+                <div className="h-10 bg-purple-700/40 animate-pulse rounded-lg w-full"></div>
+            </div>
+            <div className="relative md:w-1/4">
+                <div className="h-10 bg-purple-700/40 animate-pulse rounded-lg w-full"></div>
+            </div>
+            <div className="relative md:w-1/4">
+                <div className="h-10 bg-purple-700/40 animate-pulse rounded-lg w-full"></div>
+            </div>
+        </div>
+
+        <div className="mt-6">
+            <div className="h-5 bg-purple-700/40 animate-pulse rounded w-1/4 mb-2"></div>
+            <div className="grid grid-cols-2 gap-4">
+                <div className="h-2 bg-purple-700/40 animate-pulse rounded-lg w-full"></div>
+                <div className="h-2 bg-purple-700/40 animate-pulse rounded-lg w-full"></div>
+            </div>
+        </div>
+
+        <div className="mt-6 flex justify-end">
+            <div className="h-10 bg-purple-700/40 animate-pulse rounded-lg w-32"></div>
         </div>
     </div>
 );
@@ -36,6 +85,10 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ initialProducts }) => {
     const [selectedCategory, setSelectedCategory] = useState('');
     const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 1000 });
     const [sortOption, setSortOption] = useState('');
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 12;
 
     // Get unique categories from products
     const categories = [...new Set(initialProducts.map(product => product.category))];
@@ -92,6 +145,8 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ initialProducts }) => {
         }
 
         setFilteredProducts(result);
+        // Reset to first page when filters change
+        setCurrentPage(1);
     }, [searchTerm, selectedCategory, priceRange, sortOption, products]);
 
     const maxPrice = Math.ceil(
@@ -126,15 +181,27 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ initialProducts }) => {
         setSortOption('');
     };
 
+    // Calculate pagination
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+    // Change page
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    const goToNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    const goToPrevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+
     return (
-        <>
-            {loading && <LoadingSpinner />}
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-5xl font-bold mb-3 text-center text-white bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-purple-300">Discover Premium Collection</h1>
+                <p className="text-center text-purple-200 mb-8 text-lg">Explore our hand-picked catalog of exceptional products</p>
 
-            <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 py-12 px-4 sm:px-6 lg:px-8 transition-opacity duration-500" style={{ opacity: loading ? '0' : '1' }}>
-                <div className="max-w-7xl mx-auto">
-                    <h1 className="text-4xl font-bold mb-8 text-center text-white">Explore Our Products</h1>
-
-                    {/* Search and filters */}
+                {/* Search and filters */}
+                {loading ? (
+                    <SkeletonFilter />
+                ) : (
                     <div className="bg-purple-800 rounded-xl p-6 mb-8 shadow-lg border border-purple-600/30">
                         <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
                             {/* Search bar */}
@@ -231,16 +298,31 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ initialProducts }) => {
                             </button>
                         </div>
                     </div>
+                )}
 
-                    {/* Product count */}
-                    <div className="mb-6 text-purple-200">
-                        {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
+                {/* Product count and pagination info */}
+                {!loading && (
+                    <div className="mb-6 flex flex-col sm:flex-row justify-between items-center">
+                        <div className="text-purple-200 mb-3 sm:mb-0">
+                            {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
+                            {filteredProducts.length > 0 && (
+                                <span> - Showing page {currentPage} of {totalPages}</span>
+                            )}
+                        </div>
                     </div>
+                )}
 
-                    {/* Product grid */}
-                    {filteredProducts.length > 0 ? (
+                {/* Product grid */}
+                {loading ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        {[...Array(8)].map((_, i) => (
+                            <ProductSkeleton key={i} />
+                        ))}
+                    </div>
+                ) : filteredProducts.length > 0 ? (
+                    <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                            {filteredProducts.map(product => (
+                            {currentProducts.map(product => (
                                 <Link
                                     key={product.id}
                                     href={`/products/${product.id}`}
@@ -290,24 +372,98 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ initialProducts }) => {
                                 </Link>
                             ))}
                         </div>
-                    ) : (
-                        <div className="bg-purple-800 rounded-xl p-12 text-center shadow-lg border border-purple-600/30">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-purple-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <h3 className="text-xl font-bold text-white mb-2">No products found</h3>
-                            <p className="text-purple-300 mb-6">Try adjusting your filters or search terms</p>
-                            <button
-                                onClick={clearFilters}
-                                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
-                            >
-                                Clear All Filters
-                            </button>
-                        </div>
-                    )}
-                </div>
+
+                        {/* Pagination controls */}
+                        {totalPages > 1 && (
+                            <div className="mt-12 flex justify-center">
+                                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                    <button
+                                        onClick={goToPrevPage}
+                                        disabled={currentPage === 1}
+                                        className={`relative inline-flex items-center px-3 py-2 rounded-l-md border ${currentPage === 1
+                                                ? 'border-purple-600 bg-purple-800/50 text-purple-400 cursor-not-allowed'
+                                                : 'border-purple-600 bg-purple-800 text-purple-200 hover:bg-purple-700'
+                                            } text-sm font-medium`}
+                                    >
+                                        <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                        <span className="sr-only">Previous</span>
+                                    </button>
+
+                                    {/* Dynamic page numbers */}
+                                    {[...Array(totalPages)].map((_, i) => {
+                                        const pageNumber = i + 1;
+                                        // Show limited page numbers for better UI when many pages exist
+                                        if (
+                                            pageNumber === 1 ||
+                                            pageNumber === totalPages ||
+                                            (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                                        ) {
+                                            return (
+                                                <button
+                                                    key={pageNumber}
+                                                    onClick={() => paginate(pageNumber)}
+                                                    aria-current={currentPage === pageNumber ? "page" : undefined}
+                                                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === pageNumber
+                                                            ? 'z-10 bg-orange-500 border-orange-500 text-white'
+                                                            : 'bg-purple-800 border-purple-600 text-purple-200 hover:bg-purple-700'
+                                                        }`}
+                                                >
+                                                    {pageNumber}
+                                                </button>
+                                            );
+                                        } else if (
+                                            (pageNumber === currentPage - 2 && currentPage > 3) ||
+                                            (pageNumber === currentPage + 2 && currentPage < totalPages - 2)
+                                        ) {
+                                            // Show ellipsis for skipped pages
+                                            return (
+                                                <span
+                                                    key={pageNumber}
+                                                    className="relative inline-flex items-center px-4 py-2 border border-purple-600 bg-purple-800 text-purple-400"
+                                                >
+                                                    ...
+                                                </span>
+                                            );
+                                        }
+                                        return null;
+                                    })}
+
+                                    <button
+                                        onClick={goToNextPage}
+                                        disabled={currentPage === totalPages}
+                                        className={`relative inline-flex items-center px-3 py-2 rounded-r-md border ${currentPage === totalPages
+                                                ? 'border-purple-600 bg-purple-800/50 text-purple-400 cursor-not-allowed'
+                                                : 'border-purple-600 bg-purple-800 text-purple-200 hover:bg-purple-700'
+                                            } text-sm font-medium`}
+                                    >
+                                        <span className="sr-only">Next</span>
+                                        <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </nav>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <div className="bg-purple-800 rounded-xl p-12 text-center shadow-lg border border-purple-600/30">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-purple-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 className="text-xl font-bold text-white mb-2">No products found</h3>
+                        <p className="text-purple-300 mb-6">Try adjusting your filters or search terms</p>
+                        <button
+                            onClick={clearFilters}
+                            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+                        >
+                            Clear All Filters
+                        </button>
+                    </div>
+                )}
             </div>
-        </>
+        </div>
     )
 }
 
