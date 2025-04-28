@@ -381,8 +381,8 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ initialProducts }) => {
                                         onClick={goToPrevPage}
                                         disabled={currentPage === 1}
                                         className={`relative inline-flex items-center px-3 py-2 rounded-l-md border ${currentPage === 1
-                                                ? 'border-purple-600 bg-purple-800/50 text-purple-400 cursor-not-allowed'
-                                                : 'border-purple-600 bg-purple-800 text-purple-200 hover:bg-purple-700'
+                                            ? 'border-purple-600 bg-purple-800/50 text-purple-400 cursor-not-allowed'
+                                            : 'border-purple-600 bg-purple-800 text-purple-200 hover:bg-purple-700'
                                             } text-sm font-medium`}
                                     >
                                         <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -406,8 +406,8 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ initialProducts }) => {
                                                     onClick={() => paginate(pageNumber)}
                                                     aria-current={currentPage === pageNumber ? "page" : undefined}
                                                     className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === pageNumber
-                                                            ? 'z-10 bg-orange-500 border-orange-500 text-white'
-                                                            : 'bg-purple-800 border-purple-600 text-purple-200 hover:bg-purple-700'
+                                                        ? 'z-10 bg-orange-500 border-orange-500 text-white'
+                                                        : 'bg-purple-800 border-purple-600 text-purple-200 hover:bg-purple-700'
                                                         }`}
                                                 >
                                                     {pageNumber}
@@ -434,8 +434,8 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ initialProducts }) => {
                                         onClick={goToNextPage}
                                         disabled={currentPage === totalPages}
                                         className={`relative inline-flex items-center px-3 py-2 rounded-r-md border ${currentPage === totalPages
-                                                ? 'border-purple-600 bg-purple-800/50 text-purple-400 cursor-not-allowed'
-                                                : 'border-purple-600 bg-purple-800 text-purple-200 hover:bg-purple-700'
+                                            ? 'border-purple-600 bg-purple-800/50 text-purple-400 cursor-not-allowed'
+                                            : 'border-purple-600 bg-purple-800 text-purple-200 hover:bg-purple-700'
                                             } text-sm font-medium`}
                                     >
                                         <span className="sr-only">Next</span>

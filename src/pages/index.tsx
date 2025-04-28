@@ -4,7 +4,7 @@ import { FaGithub, FaLinkedin, FaEnvelope, FaPhone, FaFileAlt } from "react-icon
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-white flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-300">
-      <main className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden transform transition hover:scale-102 hover:shadow-purple-300/50 duration-300">
+      <main className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden transform transition hover:scale-101 hover:shadow-purple-300/50 duration-300">
         <div className="bg-purple-500 h-16 w-full relative">
           <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
             <div className="h-24 w-24 rounded-full border-4 border-white bg-purple-100 flex items-center justify-center shadow-lg">
@@ -28,9 +28,9 @@ export default function Home() {
               <span className="text-gray-700 group-hover:text-purple-600 transition">+91-7357237233</span>
             </div>
 
-            <a 
-              href="https://drive.google.com/file/d/1P7-JYPpHxaACT2fo1ZwCgLbayA_1s_bk/view?usp=sharing" 
-              target="_blank" 
+            <a
+              href="https://drive.google.com/file/d/1P7-JYPpHxaACT2fo1ZwCgLbayA_1s_bk/view?usp=sharing"
+              target="_blank"
               rel="noopener noreferrer"
               className="flex items-center p-3 bg-purple-100 rounded-lg hover:bg-purple-200 group transition duration-200"
             >
@@ -40,18 +40,18 @@ export default function Home() {
           </div>
 
           <div className="mt-6 flex justify-center space-x-4">
-            <a 
-              href="https://github.com/rvk7021" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href="https://github.com/rvk7021"
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-3 bg-purple-100 rounded-full hover:bg-purple-200 group transition duration-200"
             >
               <FaGithub className="text-purple-600 text-xl group-hover:text-purple-700 transition" />
             </a>
-            <a 
-              href="https://www.linkedin.com/in/ranvijay-kumar-825457255/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href="https://www.linkedin.com/in/ranvijay-kumar-825457255/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-3 bg-purple-100 rounded-full hover:bg-purple-200 group transition duration-200"
             >
               <FaLinkedin className="text-purple-600 text-xl group-hover:text-purple-700 transition" />
